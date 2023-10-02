@@ -25,3 +25,5 @@ PASSWORD = "密码"
 ```bash
 python web_bot.py
 ```
+
+![1696237260467.png](https://img1.imgtp.com/2023/10/02/kjWxcxXm.png)
