@@ -13,7 +13,7 @@ python版本为：3.10.13
 pip install -r requrements.txt
 ```
 
-修改用户名和密码
+修改web_bot.py文件中 15行和16行的 用户名和密码，改为自己的
 ```python
 USERNAME = "用户名"
 PASSWORD = "密码"
