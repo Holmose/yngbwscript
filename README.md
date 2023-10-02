@@ -1,3 +1,7 @@
+## 云南省干部在线学习学院 必修课学习脚本
+运行后不需要手动切换视频进行观看，自动输入验证码进行验证
+https://www.ynsgbzx.cn/
+
 ### 使用说明
 需要首先安装aibote
 下载地址：http://www.aibote.net/download.html
