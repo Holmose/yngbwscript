@@ -20,7 +20,8 @@ pip install -r requrements.txt
 ```
 
 edge和chrome会自动寻找浏览器路径，其他浏览器需要指定browserPath
-如```
+如
+```
 浏览器: "C:\\Program Files\\Google\\Chrome\\Application"
 ```
 
