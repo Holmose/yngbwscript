@@ -27,7 +27,7 @@ edge和chrome会自动寻找浏览器路径，其他浏览器需要指定browser
 需要安装官方版本的chrome浏览器
 
 然后启动运行
-```bash
+```
 python web_bot.py
 ```
 
