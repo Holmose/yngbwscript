@@ -7,13 +7,18 @@ import re
 import os
 import lxml
 from bs4 import BeautifulSoup
-
+import yaml
 
 # 1. 导入 WebBotMain 类
 from AiBot import WebBotMain
 
-USERNAME = "用户名"
-PASSWORD = "密码"
+with open('USERINFO.yaml',encoding='utf-8') as file1:
+    data = yaml.load(file1,Loader=yaml.FullLoader)#读取yaml文件
+    print(data)
+
+USERNAME = data["用户名"]
+PASSWORD = data["密码"]
+BROWSER = data["浏览器"]
 
 # 2. 自定义一个脚本类，继承 WebBotMain
 class CustomWebScript(WebBotMain):
@@ -48,6 +53,7 @@ class CustomWebScript(WebBotMain):
         # 6. API 演示
         # 注意：Python 版本支持的 Api 与 Nodejs 基本相同
         # 教程中仅演示部分 Api，更多 Api 请自行探索，所有 Api 均包含详细的参数要求和返回值，请自行查看。
+
 
         # 打开主页
         self.goto("https://www.ynsgbzx.cn/index.aspx")
@@ -135,7 +141,6 @@ class CustomWebScript(WebBotMain):
         image_base64 = self.save_screenshot(xpath)
         # 解码图片
         img_bytes = base64.b64decode(image_base64)
-
         # 识别验证码
         check_code = self.ocr.classification(img_bytes)
         
@@ -255,7 +260,7 @@ if __name__ == '__main__':
 
     # 如本地部署脚本，需要传递 WebDriver 启动参数时，参考下面方式，如不需传递启动参数，则忽略：
     driver_params = {
-        "browserName": "chrome",
+        "browserName": BROWSER,
         "debugPort": 0,
         "userDataDir": "./UserData",
         "browserPath": None,
