@@ -25,6 +25,14 @@ edge和chrome会自动寻找浏览器路径，其他浏览器需要指定browser
 浏览器: "C:\\Program Files\\Google\\Chrome\\Application"
 ```
 
+USERINFO.yaml文件默认内容：
+```
+用户名: "testuser"
+密码: "123456"
+浏览器: "chrome"
+```
+意思为：用户名为testuser，密码为123456，浏览器使用chrome
+
 需要安装官方版本的chrome浏览器
 
 然后启动运行
