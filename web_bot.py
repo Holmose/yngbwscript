@@ -19,6 +19,7 @@ with open('USERINFO.yaml',encoding='utf-8') as file1:
 USERNAME = data["用户名"]
 PASSWORD = data["密码"]
 BROWSER = data["浏览器"]
+LEARNED = data["本次学习"]
 
 # 2. 自定义一个脚本类，继承 WebBotMain
 class CustomWebScript(WebBotMain):
@@ -97,10 +98,21 @@ class CustomWebScript(WebBotMain):
         self.click_element('//*[@id="navbar"]/ul[1]/li[6]/a')
         time.sleep(self.wait_timeout)
 
-        page_message = self.get_element_text('//*[@id="MyCourseList1_AspNetPager1"]/div[1]')
-        total_page = re.findall(r'共(\d+)页', page_message)[0]
-        print("一共有", total_page, "页", "，课件数：", re.findall(r'课件数：(\d+)', page_message)[0])
+        if LEARNED != "选修":
+            # 必修课学习
+            page_message = self.get_element_text('//*[@id="MyCourseList1_AspNetPager1"]/div[1]')
+            total_page = re.findall(r'共(\d+)页', page_message)[0]
+            print("一共有", total_page, "页", "，课件数：", re.findall(r'课件数：(\d+)', page_message)[0])
+        else:
+            # 选修课学习
+            print("切换选修课")
+            self.click_element('//*[@id="lbxx"]')
+            time.sleep(self.wait_timeout)
+            page_message = self.get_element_text('//*[@id="MyCourseList4_AspNetPager1"]/div[1]')
+            total_page = re.findall(r'共(\d+)页', page_message)[0]
+            print("一共有", total_page, "页", "，课件数：", re.findall(r'课件数：(\d+)', page_message)[0])
 
+        # 获取左边考核标准
         message = self.get_element_text('//*[@id="collapseone"]')
         print()
         print("-"*10)
@@ -111,7 +123,7 @@ class CustomWebScript(WebBotMain):
         # 获取学习分数
         mark_message = self.get_element_text('//*[@id="form1"]/div[7]/div/div[2]/div[1]/div/div[2]/p[4]/mark')
         learned = re.findall(r'(\d+\.\d+)分', mark_message)
-        if learned:
+        if learned and LEARNED != "选修":
             print('已经学习：%s分！' % learned[0])
             if float(learned[0])>=self.total_core:
                 print('今日分数已学满！')
@@ -119,19 +131,25 @@ class CustomWebScript(WebBotMain):
             else:
                 print('今日分数未满，开始学习！')
                 self.unlearned = self.total_core - float(learned[0])
+        elif LEARNED == "选修":
+            print("选修课开始学习！")
         
         for batch in range(int(total_page)):
             print("开始学习第", batch+1, "页！")
-            
             self.extract_url()
 
             time.sleep(self.wait_timeout)
             self.switch_to_page(home_page_id)
             time.sleep(self.wait_timeout)
-            self.click_element('//*[@id="MyCourseList1_AspNetPager1"]/div[2]/a[last()]')
+            if LEARNED != "选修":
+                self.click_element('//*[@id="MyCourseList1_AspNetPager1"]/div[2]/a[last()]')
+            else:
+                self.click_element('//*[@id="MyCourseList4_AspNetPager1"]/div[2]/a[last()]')
             time.sleep(self.wait_timeout)
-        
-        print("今日学习完成！")
+        if LEARNED != "选修":
+            print("今日学习完成！")
+        else:
+            print("选修课已经学习完成！")
         self.close_all()
 
 
@@ -162,12 +180,14 @@ class CustomWebScript(WebBotMain):
 
                 url = 'https://www.ynsgbzx.cn/play/play.aspx?course_id=' + course_id
                 self.watch_video(link_titles[i].text.strip(), url)
-                self.unlearned -= 1
-                print("当前分数：%s" % (self.total_core - self.unlearned))
-                if (self.unlearned<=0):
-                    print("今日分数已学满！")
-                    self.close_all()
+                if LEARNED != "选修":
+                    self.unlearned -= 1
+                    print("当前分数：%s" % (self.total_core - self.unlearned))
+                    if (self.unlearned<=0):
+                        print("今日分数已学满！")
+                        self.close_all()
                 print("开始播放下一个视频！")
+                print("----------\n")
                 time.sleep(self.wait_timeout*2)
 
     # 观看每个视频
