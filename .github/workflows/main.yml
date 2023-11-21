@@ -36,7 +36,7 @@ jobs:
 
     - uses: actions/cache@v3
       with:
-        path: C:/hostedtoolcache/${{ runner.os }}/AppData/Local/pip/Cache
+        path: C:/hostedtoolcache/windows/Python/3.10.11
         key: ${{ runner.os }}-python-${{ steps.hash.outputs.hash }}
         restore-keys: ${{ runner.os }}-pip-
     
