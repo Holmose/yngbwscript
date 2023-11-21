@@ -1,0 +1,70 @@
+# This workflows will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+# action的名称
+name: Upload Python Package gotwo
+
+on:
+  # 当master分支有push时，触发action
+  push: 
+   branches:
+     - main
+  
+  # 当一个pr被合并到master时，触发action
+  # pull_request:
+  #   branches:
+  #     - master
+  
+  # 当发布时，触发action
+  #release:
+  #  types: [created]
+
+
+jobs:
+  deploy:
+    name: publish python package to pyinstaller
+    # 此作业在 windows 上运行
+    runs-on: windows-latest
+
+    steps:
+    # 此步骤使用 GitHub 的 https://github.com/actions/checkout
+    - uses: actions/checkout@v2
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: ${{ runner.os }}-pip-
+        
+    - name: Cache Flutter dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.wdm
+        key: ${{ runner.os }}-driver-cache-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: ${{ runner.os }}-driver-cache-
+    
+    # 设置python环境
+    # 此步骤使用 GitHub 的 https://github.com/actions/setup-python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10.13'
+    
+    # 安装依赖
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requrements.txt
+        
+    - name: 安装构建
+      shell: pwsh
+      run: |
+        pyinstaller -F web_bot.py
+        
+    
+    # 构建和发布
+    - name: Upload Web_Bot latest artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Web_Bot-release
+        path: dist/*
