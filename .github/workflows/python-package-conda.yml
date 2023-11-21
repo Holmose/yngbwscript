@@ -59,6 +59,7 @@ jobs:
     - name: 安装构建
       shell: pwsh
       run: |
+        where.exe python
         pyinstaller web_bot.spec
         
     
