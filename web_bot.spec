@@ -5,7 +5,7 @@ a = Analysis(
     ['web_bot.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:/hostedtoolcache/windows/Python/3.9.13/x64//Lib/site-packages/onnxruntime/capi/onnxruntime_providers_shared.dll','onnxruntime\\capi'), ('C:/hostedtoolcache/windows/Python/3.9.13/x64//Lib/site-packages/ddddocr/common.onnx', 'ddddocr'),('C:/hostedtoolcache/windows/Python/3.9.13/x64//Lib/site-packages/ddddocr/common_old.onnx', 'ddddocr'),('C:/hostedtoolcache/windows/Python/3.9.13/x64//Lib/site-packages/ddddocr/common_det.onnx', 'ddddocr')],
+    datas=[('C:/hostedtoolcache/windows/Python/3.10.11/x64//Lib/site-packages/onnxruntime/capi/onnxruntime_providers_shared.dll','onnxruntime\\capi'), ('C:/hostedtoolcache/windows/Python/3.10.11/x64//Lib/site-packages/ddddocr/common.onnx', 'ddddocr'),('C:/hostedtoolcache/windows/Python/3.10.11/x64//Lib/site-packages/ddddocr/common_old.onnx', 'ddddocr'),('C:/hostedtoolcache/windows/Python/3.10.11/x64//Lib/site-packages/ddddocr/common_det.onnx', 'ddddocr')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
