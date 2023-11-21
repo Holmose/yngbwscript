@@ -33,14 +33,14 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: ${{ runner.os }}-pip-
         
     - name: Cache Flutter dependencies
       uses: actions/cache@v2
       with:
         path: ~/.wdm
-        key: ${{ runner.os }}-driver-cache-${{ hashFiles('requirements.txt') }}
+        key: ${{ runner.os }}-driver-cache-${{ hashFiles('**/requirements.txt') }}
         restore-keys: ${{ runner.os }}-driver-cache-
     
     # 设置python环境
