@@ -32,7 +32,7 @@ jobs:
 
     - uses: actions/cache@v3
       with:
-        path: ~/.cache/pip
+        path: C:/hostedtoolcache/${{ runner.os }}/AppData/Local/pip/Cache
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: ${{ runner.os }}-pip-
         
