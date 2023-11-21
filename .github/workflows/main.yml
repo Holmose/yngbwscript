@@ -29,16 +29,6 @@ jobs:
     steps:
     # 此步骤使用 GitHub 的 https://github.com/actions/checkout
     - uses: actions/checkout@v2
-
-    - name: Hash computation
-      id: hash
-      run: echo "::set-output name=hash::$(CertUtil -hashfile requirements.txt SHA256 | findstr /R /V "SHA256" | tr -d ' ')"
-
-    - uses: actions/cache@v3
-      with:
-        path: C:/hostedtoolcache/windows/Python/3.10.11
-        key: ${{ runner.os }}-python-${{ steps.hash.outputs.hash }}
-        restore-keys: ${{ runner.os }}-pip-
     
     # 设置python环境
     # 此步骤使用 GitHub 的 https://github.com/actions/setup-python
