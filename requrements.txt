@@ -1,4 +1,4 @@
-AiBot.py==1.3.2
+AiBot.py==2.0.3
 altgraph==0.17.4
 beautifulsoup4==4.12.2
 click==8.1.6
