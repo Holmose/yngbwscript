@@ -20,6 +20,7 @@ USERNAME = data["用户名"]
 PASSWORD = data["密码"]
 BROWSER = data["浏览器"]
 LEARNED = data["本次学习"]
+CRONTAB_TIME = data["定时执行"]
 
 # 2. 自定义一个脚本类，继承 WebBotMain
 class CustomWebScript(WebBotMain):
@@ -44,18 +45,7 @@ class CustomWebScript(WebBotMain):
     # 今日总学分数
     total_core = 10
 
-    def close_all(self):
-        self.quit()
-        sys.exit(1)
-
-    # 6. 重写方法，编写脚本
-    # 注意：此方法是脚本执行入口
-    def script_main(self):
-        # 6. API 演示
-        # 注意：Python 版本支持的 Api 与 Nodejs 基本相同
-        # 教程中仅演示部分 Api，更多 Api 请自行探索，所有 Api 均包含详细的参数要求和返回值，请自行查看。
-
-
+    def oneday_watch(self):
         # 打开主页
         self.goto("https://www.ynsgbzx.cn/index.aspx")
         home_page_id = self.get_current_page_id()
@@ -100,18 +90,26 @@ class CustomWebScript(WebBotMain):
 
         if LEARNED != "选修":
             # 必修课学习
-            page_message = self.get_element_text('//*[@id="MyCourseList1_AspNetPager1"]/div[1]')
-            total_page = re.findall(r'共(\d+)页', page_message)[0]
-            print("一共有", total_page, "页", "，课件数：", re.findall(r'课件数：(\d+)', page_message)[0])
+            try:
+                page_message = self.get_element_text('//*[@id="MyCourseList1_AspNetPager1"]/div[1]')
+                total_page = re.findall(r'共(\d+)页', page_message)[0]
+                print("一共有", total_page, "页", "，课件数：", re.findall(r'课件数：(\d+)', page_message)[0])
+            except:
+                print("没有找到必修课！")
+                return
         else:
             # 选修课学习
             print("切换选修课")
-            self.click_element('//*[@id="lbxx"]')
-            time.sleep(self.wait_timeout)
-            page_message = self.get_element_text('//*[@id="MyCourseList4_AspNetPager1"]/div[1]')
-            total_page = re.findall(r'共(\d+)页', page_message)[0]
-            print("一共有", total_page, "页", "，课件数：", re.findall(r'课件数：(\d+)', page_message)[0])
-
+            try:
+                self.click_element('//*[@id="lbxx"]')
+                time.sleep(self.wait_timeout)
+                page_message = self.get_element_text('//*[@id="MyCourseList4_AspNetPager1"]/div[1]')
+                total_page = re.findall(r'共(\d+)页', page_message)[0]
+                print("一共有", total_page, "页", "，课件数：", re.findall(r'课件数：(\d+)', page_message)[0])
+            except:
+                print("没有找到必修课！")
+                return
+            
         # 获取左边考核标准
         message = self.get_element_text('//*[@id="collapseone"]')
         print()
@@ -127,7 +125,7 @@ class CustomWebScript(WebBotMain):
             print('已经学习：%s分！' % learned[0])
             if float(learned[0])>=self.total_core:
                 print('今日分数已学满！')
-                self.close_all()
+                return
             else:
                 print('今日分数未满，开始学习！')
                 self.unlearned = self.total_core - float(learned[0])
@@ -150,8 +148,30 @@ class CustomWebScript(WebBotMain):
             print("今日学习完成！")
         else:
             print("选修课已经学习完成！")
-        self.close_all()
+        return
 
+
+    # 6. 重写方法，编写脚本
+    # 注意：此方法是脚本执行入口
+    def script_main(self):
+        # 6. API 演示
+        # 注意：Python 版本支持的 Api 与 Nodejs 基本相同
+        # 教程中仅演示部分 Api，更多 Api 请自行探索，所有 Api 均包含详细的参数要求和返回值，请自行查看。
+
+        init_count = 0
+        while True:
+            time_now = time.strftime("%H:%M", time.localtime())  # 刷新
+            if time_now in CRONTAB_TIME:
+                self.oneday_watch()
+                init_count += 1
+                print("已经持续执行{}天！".format(init_count))
+            elif init_count == 0:
+                self.oneday_watch()
+                init_count += 1
+                print("已经持续执行{}天！".format(init_count))
+            for char in '|/-\\':
+                print(f"等待中 {char}", end="\r")
+                time.sleep(0.3)
 
     # 验证码识别
     def image_check(self, xpath:str) -> str:
@@ -185,7 +205,7 @@ class CustomWebScript(WebBotMain):
                     print("当前分数：%s" % (self.total_core - self.unlearned))
                     if (self.unlearned<=0):
                         print("今日分数已学满！")
-                        self.close_all()
+                        return
                 print("开始播放下一个视频！")
                 print("----------\n")
                 time.sleep(self.wait_timeout*2)
@@ -236,10 +256,17 @@ class CustomWebScript(WebBotMain):
                 time.sleep(2)
                 # 总共时长
                 total_time = self.execute_script("document.querySelector('video').duration;")
+
                 if total_time:
                     total_time = float(total_time)
                 # 实时监听进度
                 curent_time = self.execute_script("document.querySelector('video').currentTime;")
+
+                if curent_time == "0":
+                    # 视频卡住
+                    print("检测到视频卡住，点击恢复！")
+                    self.click_element('//*[@id="container_display"]')
+
                 if curent_time:
                     curent_time = float(curent_time)
 
