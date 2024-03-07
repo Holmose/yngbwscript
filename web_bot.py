@@ -49,6 +49,9 @@ class CustomWebScript(WebBotMain):
         # 打开主页
         self.goto("https://www.ynsgbzx.cn/index.aspx")
         home_page_id = self.get_current_page_id()
+        time.sleep(self.wait_timeout)
+        # 点击首页
+        self.click_element('//*[@id="navbar"]/ul[1]/li[1]/a')
 
         while True:
             try:
@@ -162,16 +165,27 @@ class CustomWebScript(WebBotMain):
         while True:
             time_now = time.strftime("%H:%M", time.localtime())  # 刷新
             if time_now in CRONTAB_TIME:
-                self.oneday_watch()
+                self.catch_error()
                 init_count += 1
                 print("已经持续执行{}天！".format(init_count))
             elif init_count == 0:
-                self.oneday_watch()
+                self.catch_error()
                 init_count += 1
                 print("已经持续执行{}天！".format(init_count))
             for char in '|/-\\':
                 print(f"等待中 {char}", end="\r")
                 time.sleep(0.3)
+
+    def catch_error(self):
+        # 修复长时间执行登录失效问题
+        end = False
+        while not end:
+            try:
+                self.oneday_watch()
+                end = True
+            except Exception as e:
+                print("出现错误，继续执行！", e)
+                end = False
 
     # 验证码识别
     def image_check(self, xpath:str) -> str:
