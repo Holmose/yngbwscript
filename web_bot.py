@@ -184,7 +184,7 @@ class CustomWebScript(WebBotMain):
                 self.oneday_watch()
                 end = True
             except Exception as e:
-                print("出现错误，继续执行！", e)
+                print("出现错误，从头执行！", e)
                 end = False
 
     # 验证码识别
@@ -237,7 +237,7 @@ class CustomWebScript(WebBotMain):
             print('识别出的验证码为：' + check_code)
             self.send_keys('//*[@id="validanswer"]', check_code)
 
-            # 点击登录
+            # 点击提交
             self.click_element('//*[@id="btnvalidanswer"]')
             time.sleep(self.wait_timeout)
             if self.click_alert(True):
@@ -245,6 +245,9 @@ class CustomWebScript(WebBotMain):
                 time.sleep(self.wait_timeout)
             else:
                 print("验证码正确")
+                break
+            if self.click_alert(True):
+                print("30秒内未回答正确！")
                 break
 
         time.sleep(self.wait_timeout)
@@ -265,6 +268,7 @@ class CustomWebScript(WebBotMain):
             # 跳转到未看时间点
             self.execute_script("document.querySelector('video').currentTime=%s;" % time_point)                
 
+        time_wait = 0
         while True:
             try:
                 time.sleep(2)
@@ -300,6 +304,9 @@ class CustomWebScript(WebBotMain):
             except Exception as e:
                 print("出现错误，等待 %s %ss" % (e, self.wait_timeout))
                 time.sleep(self.wait_timeout)
+                time_wait += 1
+                if time_wait>=9:
+                    raise Exception("超过等待次数，返回错误!")
         
     def print_progress_bar(self, iteration, total, prefix='', suffix='', decimals=1, length=50, fill='█'):
         percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
